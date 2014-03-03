@@ -1,0 +1,9 @@
+<%doc> -*- coding:utf-8 -*- </%doc>
+<%def name="subject(email, token)">
+仮登録を受け付けました
+</%def>
+<%def name="body(email, token)">
+このメールは ${email} 宛に送信されています。
+
+こちらのURLから本登録を行ってください。 ${token}
+</%def>

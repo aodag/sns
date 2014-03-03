@@ -1,0 +1,7 @@
+Lib
+Include
+Scripts
+*.egg-info
+*.pyc
+*~
+pyvenv.cfg
