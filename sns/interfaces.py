@@ -7,9 +7,16 @@ class IRegistration(Interface):
     message_factory = Attribute(u"Creating mail message")
     token_store = Attribute(u"A store for keep token")
     token_generator = Attribute(u"generating token for registration")
+    user_factory = Attribute(u"Creating new user")
 
     def register(email):
         """ invoke registration procedure """
+
+    def verify_token(email, token):
+        """ verify token """
+
+    def activate(email, username, password):
+        """ activate with token """
 
 
 class ITokenGenerator(Interface):
@@ -26,3 +33,9 @@ class IMessageFactory(Interface):
 
     def __call__(email, token):
         """ create message """
+
+
+class IUserFactory(Interface):
+
+    def __call__(self, email, username, password):
+        """ create new user """

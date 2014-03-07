@@ -14,7 +14,7 @@ class TestRegistration(unittest.TestCase):
 
     def test_iface(self):
         from ..interfaces import IRegistration
-        target = self._makeOne(None, None, None, None)
+        target = self._makeOne(None, None, None, None, None)
         verifyObject(IRegistration, target)
 
     def test_register(self):
@@ -28,7 +28,8 @@ class TestRegistration(unittest.TestCase):
         token_store = dict()
         token_generator = lambda: "this-is-testing-token"
         target = self._makeOne(mailer, message_factory,
-                               token_store, token_generator)
+                               token_store, token_generator,
+                               None,)
         target.register(email)
 
         assert email in target.token_store
@@ -38,3 +39,53 @@ class TestRegistration(unittest.TestCase):
                 C(Message,
                   recipients=[email],
                   strict=False))
+
+    def test_verify_token(self):
+        email = "sns@example.com"
+
+        token = "this-is-testing-token"
+        token_store = {email: token}
+        target = self._makeOne(None, None,
+                               token_store, None,
+                               None)
+
+        assert target.verify_token(email, token)
+
+    def test_verify_token_empty(self):
+        email = "sns@example.com"
+
+        token = "this-is-testing-token"
+        token_store = {}
+        target = self._makeOne(None, None,
+                               token_store, None,
+                               None)
+
+        assert not target.verify_token(email, token)
+
+    def test_verify_token_invalid(self):
+        email = "sns@example.com"
+
+        token = "this-is-testing-token"
+        token_store = {email: token + "x"}
+        target = self._makeOne(None, None,
+                               token_store, None,
+                               None)
+
+        assert not target.verify_token(email, token)
+
+    def test_activate(self):
+        username = "user1"
+        email = "user@example.com"
+        password = "secret-password"
+
+        token = "this-is-testing-token"
+        token_store = {email: token}
+        target = self._makeOne(None, None,
+                               token_store, None,
+                               lambda email, username, password:
+                               (email, username, password))
+
+        result = target.activate(email, username, password)
+
+        compare(result, (email, username, password))
+        compare(token_store, {})
