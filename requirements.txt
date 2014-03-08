@@ -12,6 +12,8 @@ beautifulsoup4==4.3.2
 colander==1.0b1
 colorama==0.2.7
 deform==2.0a2
+dogpile.cache==0.5.3
+dogpile.core==0.4.1
 peppercorn==0.4
 psycopg2==2.5.2
 py==1.4.20
