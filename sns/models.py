@@ -20,6 +20,13 @@ DBSession = scoped_session(
 Base = declarative_base()
 
 
+def init(engine, create=False):
+    DBSession.remove()
+    DBSession.configure(bind=engine)
+    if create:
+        Base.metadata.create_all(bind=engine)
+
+
 class User(Base):
     __tablename__ = 'users'
     query = DBSession.query_property()

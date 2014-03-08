@@ -13,6 +13,7 @@ colander==1.0b1
 colorama==0.2.7
 deform==2.0a2
 peppercorn==0.4
+psycopg2==2.5.2
 py==1.4.20
 pyramid==1.5b1
 pyramid-deform==0.2
@@ -22,6 +23,7 @@ pyramid-mako==0.3.1
 pyramid-tm==0.7
 pytest==2.5.2
 pytz==2013.9
+redis==2.9.1
 repoze.lru==0.6
 repoze.sendmail==4.2
 six==1.5.2

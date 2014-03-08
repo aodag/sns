@@ -4,11 +4,30 @@ import unittest
 import webtest
 
 
+settings = {
+    "mako.directories": "sns:templates",
+    "cache.registration.backend": "dogpile.cache.redis",
+    #"sqlalchemy.url": "postgresql+psycopg2://postgres@localhost/sns_test",
+    #"sqlalchemy.url": "sqlite:///",
+}
+
+
+def setUpModule():
+    """ """
+    import os
+    if os.getenv('SQLALCHEMY_URL'):
+        settings['sqlalchemy.url'] = os.getenv('SQLALCHEMY_URL')
+    else:
+        settings['sqlalchemy.url'] = "sqlite:///"
+    os.environ['SNS_CREATE_TABLES'] = "1"
+
+
+def tearDownModule():
+    """ """
+
+
 class TestSNS(unittest.TestCase):
-    settings = {
-        "mako.directories": "sns:templates",
-        "cache.registration.backend": "dogpile.cache.redis",
-    }
+    settings = settings
 
     def _makeApp(self, **settings):
         from sns import main
