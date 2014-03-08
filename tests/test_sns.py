@@ -5,6 +5,10 @@ import webtest
 
 
 settings = {
+    "pyramid.includes": ['pyramid_redis_sessions',
+                         'pyramid_mailer.testing',
+                         ],
+    "redis.sessions.secret": "secret",
     "mako.directories": "sns:templates",
     "cache.registration.backend": "dogpile.cache.redis",
     #"sqlalchemy.url": "postgresql+psycopg2://postgres@localhost/sns_test",
@@ -19,6 +23,7 @@ def setUpModule():
         settings['sqlalchemy.url'] = os.getenv('SQLALCHEMY_URL')
     else:
         settings['sqlalchemy.url'] = "sqlite:///"
+    # settings['pyramid.includes'].append('sns.signed_cookie_session')
     os.environ['SNS_CREATE_TABLES'] = "1"
 
 
@@ -42,14 +47,9 @@ class TestSNS(unittest.TestCase):
     def test_registration(self):
         import urllib.parse
         from dogpile.cache import make_region
-        settings = self.settings.copy()
-        settings.update({
-            "cache.registration.backend": "dogpile.cache.redis",
-        })
         tokens = make_region()
-        tokens.configure_from_config(settings, 'cache.registration.')
-        settings['pyramid.includes'] = ['pyramid_mailer.testing']
-        app = self._makeApp(**settings)
+        tokens.configure_from_config(self.settings, 'cache.registration.')
+        app = self._makeApp(**self.settings)
 
         app = webtest.TestApp(app)
 
