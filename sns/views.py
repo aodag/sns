@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 from pyramid_deform import FormView
 from pyramid.httpexceptions import HTTPFound
+from pyramid import security
 from . import schema
 from . import api
 from . import predicates
@@ -36,5 +37,17 @@ class ActivationFormView(FormView):
                             email,
                             values['username'],
                             values['password'])
+        auth = security.remember(self.request, user.username)
+        response = HTTPFound(self.request.route_url('mypage'))
+        response.headerlist.extend(auth)
+        return response
 
-        return HTTPFound(self.request.route_url('top'))
+
+@view_config(route_name="mypage",
+             permission="view")
+class MyPageView(object):
+    def __init__(self, request):
+        self.request = request
+
+    def __call__(self):
+        return self.request.response

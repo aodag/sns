@@ -66,3 +66,6 @@ class TestSNS(unittest.TestCase):
         res.form['username'] = 'test1'
         res.form['password'] = 'secret'
         res = res.form.submit('activate')
+        assert res.location == 'http://localhost/mypage'
+
+        app.get(res.location)
