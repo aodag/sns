@@ -2,6 +2,7 @@
 
 import unittest
 import webtest
+from testfixtures import TempDirectory
 
 
 settings = {
@@ -19,17 +20,18 @@ settings = {
 def setUpModule():
     """ """
     import os
+    d = TempDirectory()
     if os.getenv('SQLALCHEMY_URL'):
         settings['sqlalchemy.url'] = os.getenv('SQLALCHEMY_URL')
     else:
-        settings['sqlalchemy.url'] = "sqlite:///"
+        settings['sqlalchemy.url'] = "sqlite:///%(here)s/sns.sqlite" % dict(here=d.path)
     # settings['pyramid.includes'].append('sns.signed_cookie_session')
     os.environ['SNS_CREATE_TABLES'] = "1"
 
 
 def tearDownModule():
     """ """
-
+    TempDirectory.cleanup_all()
 
 class TestSNS(unittest.TestCase):
     settings = settings
@@ -69,3 +71,30 @@ class TestSNS(unittest.TestCase):
         assert res.location == 'http://localhost/mypage'
 
         app.get(res.location)
+
+    def _makeUser(self, *args, **kwargs):
+        from sqlalchemy import engine_from_config
+        from sqlalchemy.orm import sessionmaker
+        from sns.models import User
+        engine = engine_from_config(self.settings)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        session.add(User(*args, **kwargs))
+        session.commit()
+        session.close()
+
+    def test_login(self):
+        app = self._makeApp(**self.settings)
+        app = webtest.TestApp(app)
+        username = "profile_test_user"
+        email = "profile_test_user@example.com"
+        password = "secret"
+        self._makeUser(username=username,
+                       email=email,
+                       password=password)
+        res = app.get('/login')
+        res.form['username'] = username
+        res.form['password'] = password
+        res = res.form.submit('login')
+
+        assert res.location == 'http://localhost/mypage'

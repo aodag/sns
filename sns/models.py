@@ -1,11 +1,16 @@
 import hashlib
 from sqlalchemy import (
     Column,
+    Enum,
+    ForeignKey,
     Integer,
+    LargeBinary,
     String,
     Unicode,
+    UnicodeText,
 )
 from sqlalchemy.orm import (
+    relationship,
     scoped_session,
     sessionmaker,
 )
@@ -45,3 +50,32 @@ class User(Base):
 
     def verify_password(self, password):
         return self.password_hash == self._hash(password)
+
+
+class UserProfile(Base):
+    __tablename__ = 'userprofiles'
+    query = DBSession.query_property()
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    given_name = Column(Unicode(255))
+    family_name = Column(Unicode(255))
+    nick = Column(Unicode(255))
+    gender = Column(Enum('male', 'female', name="gender"))
+    plan = Column(UnicodeText)
+    user = relationship(User, backref='profiles')
+
+    def add_image(self, image):
+        data = image.tostring()
+        return UserProfileImage(user_profile=self,
+                                user=self.user,
+                                data=data)
+
+class UserProfileImage(Base):
+    __tablename__ = 'userprofileimages'
+    query = DBSession.query_property()
+    id = Column(Integer, primary_key=True)
+    user_profile_id = Column(Integer, ForeignKey('userprofiles.id'))
+    user_profile = relationship('UserProfile',
+                                backref="images")
+
+    data = Column(LargeBinary)

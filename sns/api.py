@@ -1,3 +1,4 @@
+from pyramid import security
 from pyramid_mailer.interfaces import IMailer
 from pyramid_mailer import get_mailer
 from zope.interface import directlyProvides
@@ -6,6 +7,7 @@ from .interfaces import (
     IRegistration,
     ITokenGenerator,
     ITokenStore,
+    IUserAuthenticator,
     IUserFactory,
 )
 
@@ -40,3 +42,11 @@ def verify_token(request, email, token):
 def activate(request, email, username, password):
     registration = get_registration(request)
     return registration.activate(email, username, password)
+
+
+def login(request, username, password):
+    authenticator = request.registry.getUtility(IUserAuthenticator)
+    auth = authenticator(username, password)
+    if not auth:
+        return None
+    return security.remember(request, auth)

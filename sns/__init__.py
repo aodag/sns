@@ -10,9 +10,12 @@ my_session_factory = SignedCookieSessionFactory('itsaseekreet')
 def includeme(config):
     config.add_route("top", "/")
     config.add_route("register", "/register")
+    config.add_route("login", "/login")
     config.add_route("activate", "/activate")
     config.add_route("mypage", "/mypage",
                      factory=".resources.MyPageResource")
+    config.add_route("profile", "/mypage/profile/*traversal",
+                     factory=".resources.ProfileResource")
 
 
 def signed_cookie_session(config):

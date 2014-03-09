@@ -37,5 +37,10 @@ class IMessageFactory(Interface):
 
 class IUserFactory(Interface):
 
-    def __call__(self, email, username, password):
+    def __call__(email, username, password):
         """ create new user """
+
+class IUserAuthenticator(Interface):
+
+    def __call__(username, password):
+        """ authenticate user """

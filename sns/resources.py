@@ -7,3 +7,12 @@ class MyPageResource(object):
 
     def __init__(self, request):
         self.request = request
+
+class ProfileResource(object):
+    __acl__ = [
+        (Allow, Authenticated, 'view'),
+        (Allow, Authenticated, 'edit'),
+        ]
+
+    def __init__(self, request):
+        self.request = request

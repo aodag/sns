@@ -1,3 +1,4 @@
+import logging
 from pyramid.view import view_config
 from pyramid_deform import FormView
 from pyramid.httpexceptions import HTTPFound
@@ -6,6 +7,7 @@ from . import schema
 from . import api
 from . import predicates
 
+logger = logging.Logger(__name__)
 
 @view_config(route_name="top")
 def index(request):
@@ -51,3 +53,34 @@ class MyPageView(object):
 
     def __call__(self):
         return self.request.response
+
+@view_config(route_name="profile",
+             permission="view")
+def profile_view(request):
+    return dict()
+
+@view_config(route_name="profile",
+             name="edit",
+             permission="edit")
+class ProfileEditForm(FormView):
+    schema = schema.UserProfileSchema()
+    buttons = ('save',)
+
+
+@view_config(route_name="login",
+             renderer="login.mako")
+class LoginFormView(FormView):
+    schema = schema.LoginSchema()
+    buttons = ('login',)
+
+    def login_success(self, values):
+        logger.info("login {0}".format(values))
+        auth = api.login(self.request,
+                         values['username'],
+                         values['password'])
+        if auth is None:
+            return
+
+        response = HTTPFound(self.request.route_url('mypage'))
+        response.headerlist.extend(auth)
+        return response
