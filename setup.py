@@ -20,4 +20,5 @@ requires = [
 
 setup(name="sns",
       install_requires=requires,
+      packages=["sns"],
       )
