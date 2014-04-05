@@ -24,7 +24,7 @@ def signed_cookie_session(config):
 
 def main(global_conf, **settings):
     engine = engine_from_config(settings)
-    models.init(engine, create=os.getenv('SNS_CREATE_TABLES'))
+    models.init(engine)
 
     config = Configurator(settings=settings)
     config.include("pyramid_mako")

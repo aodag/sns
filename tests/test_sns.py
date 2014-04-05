@@ -12,8 +12,6 @@ settings = {
     "redis.sessions.secret": "secret",
     "mako.directories": "sns:templates",
     "cache.registration.backend": "dogpile.cache.redis",
-    #"sqlalchemy.url": "postgresql+psycopg2://postgres@localhost/sns_test",
-    #"sqlalchemy.url": "sqlite:///",
 }
 
 
@@ -25,9 +23,11 @@ def setUpModule():
         settings['sqlalchemy.url'] = os.getenv('SQLALCHEMY_URL')
     else:
         settings['sqlalchemy.url'] = "sqlite:///%(here)s/sns.sqlite" % dict(here=d.path)
-    # settings['pyramid.includes'].append('sns.signed_cookie_session')
-    os.environ['SNS_CREATE_TABLES'] = "1"
-
+        from alembic.config import Config
+        from alembic import command
+        alembic_cfg = Config("alembic.ini")
+        alembic_cfg.set_main_option('sqlalchemy.url', settings['sqlalchemy.url'])
+        command.upgrade(alembic_cfg, "head")
 
 def tearDownModule():
     """ """
