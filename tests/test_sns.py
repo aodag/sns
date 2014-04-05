@@ -30,7 +30,7 @@ def setUpModule():
         command.upgrade(alembic_cfg, "head")
 
     if os.getenv('USE_REDIS'):
-        settings['cache.registration.backend'] = os.getenv('dogpile.cache.redis')
+        settings['cache.registration.backend'] = 'dogpile.cache.redis'
         settings['pyramid.includes'].append('pyramid_redis_sessions')
     else:
         from sns.testing import FakeLock
