@@ -1,5 +1,5 @@
 import unittest
-from testfixtures import ShouldRaise
+from testfixtures import ShouldRaise, compare
 
 
 class TestUser(unittest.TestCase):
@@ -10,6 +10,10 @@ class TestUser(unittest.TestCase):
 
     def _makeOne(self, *args, **kwargs):
         return self._getTarget()(*args, **kwargs)
+
+    def _makeProfile(self, *args, **kwargs):
+        from ..models import UserProfile
+        return UserProfile(*args, **kwargs)
 
     def test_verify_password(self):
         user = self._makeOne()
@@ -27,5 +31,22 @@ class TestUser(unittest.TestCase):
 
     def test_hash(self):
         user = self._makeOne()
-        self.assertEqual(len(user._hash('')), 40)
-        self.assertEqual(len(user._hash('*' * 100)), 40)
+        compare(len(user._hash('')), 40)
+        compare(len(user._hash('*' * 100)), 40)
+
+    def test_has_profile_no_profile(self):
+        user = self._makeOne()
+        result = user.has_profile()
+        self.assertFalse(result)
+
+    def test_has_profile(self):
+        user = self._makeOne()
+        self._makeProfile(user=user)
+
+        result = user.has_profile()
+        self.assertTrue(result)
+
+    def test_new_profile(self):
+        user = self._makeOne()
+        result = user.new_profile()
+        compare(result.user, user)

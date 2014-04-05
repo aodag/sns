@@ -51,6 +51,13 @@ class User(Base):
     def verify_password(self, password):
         return self.password_hash == self._hash(password)
 
+    def has_profile(self):
+        return len(self.profiles)
+
+    def new_profile(self, *args, **kwargs):
+        return UserProfile(user=self,
+                           *args, **kwargs)
+
 
 class UserProfile(Base):
     __tablename__ = 'userprofiles'

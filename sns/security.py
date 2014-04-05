@@ -1,6 +1,7 @@
 import logging
 from pyramid.authentication import SessionAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.security import authenticated_userid
 from .interfaces import IUserAuthenticator
 from .models import User
 
@@ -18,6 +19,11 @@ def includeme(config):
     reg.registerUtility(authenticate_user,
                         IUserAuthenticator)
 
+    config.add_request_method(get_authenticated_user,
+                              name='authenticated_user',
+                              property=True,
+                              reify=True)
+
 
 def authenticate_user(username, password):
     user = User.query.filter(User.username==username).first()
@@ -30,3 +36,11 @@ def authenticate_user(username, password):
         return None
 
     return user.username
+
+
+def get_authenticated_user(request):
+    username = authenticated_userid(request)
+    if not username:
+        return
+
+    return User.query.filter(User.username==username).first()
