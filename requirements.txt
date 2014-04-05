@@ -36,6 +36,7 @@ transaction==1.4.1
 translationstring==1.1
 venusian==1.0a8
 waitress==0.8.8
+wheel==0.23.0
 zope.deprecation==4.1.0
 zope.interface==4.1.1
 zope.sqlalchemy==0.7.4
