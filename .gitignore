@@ -7,3 +7,6 @@ Scripts
 pyvenv.cfg
 env
 build
+htmlcov
+.coverage
+
