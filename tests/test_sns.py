@@ -6,12 +6,11 @@ from testfixtures import TempDirectory
 
 
 settings = {
-    "pyramid.includes": ['pyramid_redis_sessions',
-                         'pyramid_mailer.testing',
+    "pyramid.includes": ['pyramid_mailer.testing',
                          ],
     "redis.sessions.secret": "secret",
     "mako.directories": "sns:templates",
-    "cache.registration.backend": "dogpile.cache.redis",
+    #"cache.registration.backend": "dogpile.cache.redis",
 }
 
 
@@ -22,26 +21,39 @@ def setUpModule():
     if os.getenv('SQLALCHEMY_URL'):
         settings['sqlalchemy.url'] = os.getenv('SQLALCHEMY_URL')
     else:
-        settings['sqlalchemy.url'] = "sqlite:///%(here)s/sns.sqlite" % dict(here=d.path)
+        sqlalchemy_url = "sqlite:///%(here)s/sns.sqlite" % dict(here=d.path)
+        settings['sqlalchemy.url'] = sqlalchemy_url
         from alembic.config import Config
         from alembic import command
         alembic_cfg = Config("alembic.ini")
-        alembic_cfg.set_main_option('sqlalchemy.url', settings['sqlalchemy.url'])
+        alembic_cfg.set_main_option('sqlalchemy.url', sqlalchemy_url)
         command.upgrade(alembic_cfg, "head")
+
+    if os.getenv('USE_REDIS'):
+        settings['cache.registration.backend'] = os.getenv('dogpile.cache.redis')
+        settings['pyramid.includes'].append('pyramid_redis_sessions')
+    else:
+        from sns.testing import FakeLock
+        settings['cache.registration.backend'] = "dogpile.cache.dbm"
+        settings['cache.registration.arguments.filename'] = d.getpath('registration.dbm')
+        settings['cache.registration.arguments.lock_factory'] = FakeLock
+        settings['pyramid.includes'].append('sns.signed_cookie_session')
+
 
 def tearDownModule():
     """ """
     TempDirectory.cleanup_all()
 
+
 class TestSNS(unittest.TestCase):
-    settings = settings
+    #settings = settings
 
     def _makeApp(self, **settings):
         from sns import main
         return main({}, **settings)
 
     def test_index(self):
-        app = self._makeApp(**self.settings)
+        app = self._makeApp(**settings)
         app = webtest.TestApp(app)
 
         app.get('/')
@@ -50,8 +62,8 @@ class TestSNS(unittest.TestCase):
         import urllib.parse
         from dogpile.cache import make_region
         tokens = make_region()
-        tokens.configure_from_config(self.settings, 'cache.registration.')
-        app = self._makeApp(**self.settings)
+        tokens.configure_from_config(settings, 'cache.registration.')
+        app = self._makeApp(**settings)
 
         app = webtest.TestApp(app)
 
@@ -76,7 +88,7 @@ class TestSNS(unittest.TestCase):
         from sqlalchemy import engine_from_config
         from sqlalchemy.orm import sessionmaker
         from sns.models import User
-        engine = engine_from_config(self.settings)
+        engine = engine_from_config(settings)
         Session = sessionmaker(bind=engine)
         session = Session()
         session.add(User(*args, **kwargs))
@@ -84,7 +96,7 @@ class TestSNS(unittest.TestCase):
         session.close()
 
     def test_login(self):
-        app = self._makeApp(**self.settings)
+        app = self._makeApp(**settings)
         app = webtest.TestApp(app)
         username = "profile_test_user"
         email = "profile_test_user@example.com"
