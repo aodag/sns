@@ -77,6 +77,7 @@ class UserProfile(Base):
                                 user=self.user,
                                 data=data)
 
+
 class UserProfileImage(Base):
     __tablename__ = 'userprofileimages'
     query = DBSession.query_property()

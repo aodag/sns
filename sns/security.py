@@ -26,7 +26,7 @@ def includeme(config):
 
 
 def authenticate_user(username, password):
-    user = User.query.filter(User.username==username).first()
+    user = User.query.filter(User.username == username).first()
     if user is None:
         logger.debug('user "{0}" not found'.format(username))
         return None
@@ -43,4 +43,4 @@ def get_authenticated_user(request):
     if not username:
         return
 
-    return User.query.filter(User.username==username).first()
+    return User.query.filter(User.username == username).first()

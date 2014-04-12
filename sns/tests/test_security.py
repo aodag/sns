@@ -9,6 +9,7 @@ def setUpModule():
     engine = create_engine('sqlite:///')
     models.init(engine, create=True)
 
+
 def tearDownModle():
     import transaction
     from sns import models

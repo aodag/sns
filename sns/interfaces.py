@@ -40,6 +40,7 @@ class IUserFactory(Interface):
     def __call__(email, username, password):
         """ create new user """
 
+
 class IUserAuthenticator(Interface):
 
     def __call__(username, password):

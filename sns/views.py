@@ -9,6 +9,7 @@ from . import predicates
 
 logger = logging.Logger(__name__)
 
+
 @view_config(route_name="top")
 def index(request):
     return request.response
@@ -54,10 +55,12 @@ class MyPageView(object):
     def __call__(self):
         return self.request.response
 
+
 @view_config(route_name="profile",
              permission="view")
 def profile_view(request):
     return dict()
+
 
 @view_config(route_name="profile",
              name="edit",
