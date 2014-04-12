@@ -10,7 +10,7 @@ settings = {
                          ],
     "redis.sessions.secret": "secret",
     "mako.directories": "sns:templates",
-    #"cache.registration.backend": "dogpile.cache.redis",
+    "registration.mail.sender": "sender@example.com",
 }
 
 

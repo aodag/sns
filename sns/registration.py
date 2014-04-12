@@ -27,7 +27,8 @@ def includeme(config):
     region.configure_from_config(config.registry.settings,
                                  'cache.registration.')
     store = DogPileTokenStore(region)
-    message_factory = RegistrationMessageFactory()
+    message_factory = RegistrationMessageFactory(
+        sender=config.registry.settings['registration.mail.sender'])
 
     reg.utilities.register([], ITokenStore,
                            "",
@@ -60,8 +61,8 @@ directlyProvides(user_factory, IUserFactory)
 
 @implementer(IMessageFactory)
 class RegistrationMessageFactory(object):
-    def __init__(self):
-        pass
+    def __init__(self, sender):
+        self.sender = sender
 
     def __call__(self, email, token):
         body = renderers.render(
@@ -76,6 +77,7 @@ class RegistrationMessageFactory(object):
 
         return Message(recipients=[email],
                        body=body,
+                       sender=self.sender,
                        subject=subject.strip())
 
 
