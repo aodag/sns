@@ -31,7 +31,7 @@ pyramid-mailer==0.13
 pyramid-mako==0.3.1
 pyramid-redis-sessions==1.0a1
 pyramid-tm==0.7
-pyramid==1.5b1
+pyramid==1.5
 pytest==2.5.2
 pytz==2013.9
 redis==2.9.1
