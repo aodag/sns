@@ -33,6 +33,7 @@ def main(global_conf, **settings):
     config.include(".")
     config.include(".registration")
     config.include(".security")
+    config.include(".web.registration")
     config.scan(".views")
     config.scan(".layouts")
     return config.make_wsgi_app()
