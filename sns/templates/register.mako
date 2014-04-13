@@ -1,6 +1,2 @@
-<!DOCTYPE html>
-<html>
-<body>
+<%inherit file="${context['main_template'].uri}"/>
 ${form|n}
-</body>
-</html>
