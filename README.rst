@@ -1,7 +1,7 @@
 .. -*- coding:utf-8 -*-
 
-.. image:: https://drone.io/bitbucket.org/aodag/sns/status.png
-   :target: https://drone.io/bitbucket.org/aodag/sns
+.. image:: https://travis-ci.org/aodag/sns.svg?branch=master
+   :target: https://travis-ci.org/aodag/sns
 
 ======
 sns
