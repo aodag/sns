@@ -3,6 +3,8 @@ python: 3.4
 env:
   matrix:
     - TOXENV=py34
+    - TOXENV=coverage
+    - TOXENV=flake8
 install:
   - pip install tox -f wheelhouse
 script: tox
