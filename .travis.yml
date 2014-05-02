@@ -1,0 +1,8 @@
+language: python
+python: 3.4
+env:
+  matrix:
+    - TOXENV=py34
+install:
+  - pip install tox -f wheelhouse
+script: tox
