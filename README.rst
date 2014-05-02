@@ -7,4 +7,4 @@
 sns
 ======
 
-:Repository: https://bitbucket.org/aodag/sns
+:Repository: https://github.com/aodag/sns
