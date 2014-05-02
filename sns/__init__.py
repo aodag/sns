@@ -13,7 +13,7 @@ def includeme(config):
     config.add_route("activate", "/activate")
     config.add_route("mypage", "/mypage",
                      factory=".resources.MyPageResource")
-    config.add_route("profile", "/mypage/profile/*traversal",
+    config.add_route("profile", "/users/{username}",
                      factory=".resources.ProfileResource")
 
 

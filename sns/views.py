@@ -1,7 +1,7 @@
 import logging
 from pyramid.view import view_config
 from pyramid_deform import FormView
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from . import schema
 from . import api
 
@@ -24,9 +24,15 @@ class MyPageView(object):
 
 
 @view_config(route_name="profile",
-             permission="view")
-def profile_view(request):
-    return dict()
+             permission="view",
+             renderer='user_profile.mako')
+def profile_view(context, request):
+    profile = context.profile
+
+    if profile is None:
+        raise HTTPNotFound
+
+    return dict(profile=profile)
 
 
 @view_config(route_name="profile",
